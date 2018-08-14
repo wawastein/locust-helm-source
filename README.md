@@ -19,12 +19,15 @@ This chart will do the following:
 ### Installing the chart
 
 To install the chart with the release name `locust`:
-
+1. Clone this repository
+2. Create your locustfile, place it in a directory inside this chart
+3. Run
 ```bash
-helm repo add wawastein-locust 'https://raw.githubusercontent.com/wawastein/locust-helm/master/'
-helm repo update
-helm install -n locust --set targetHost=http://example.com --set locustFile.dir="my_dir" --set locustFile.filename="my_locust.py" wawastein-locust/locust
+helm install -n locust --set targetHost=http://example.com --set locustFile.dir="my_dir" --set locustFile.filename="my_locust.py" . 
 ```
+**PSA**
+Unfortunately user cannot install this chart from external helm repository and use their local files, see [Issue](https://github.com/helm/helm/issues/3276).
+This is also the biggest caveat of stable/locust chart as well as all values being hardcoded.
 
 | Parameter                    | Description                             | Default                                               |
 | ---------------------------- | ----------------------------------      | ----------------------------------------------------- |
@@ -42,12 +45,6 @@ helm install -n locust --set targetHost=http://example.com --set locustFile.dir=
 | `worker.replicaCount`        | Number of workers to run                | `2`                                                   |
 
 Specify parameters using `--set key=value[,key=value]` argument to `helm install`
-
-Alternatively a YAML file that specifies the values for the parameters can be provided like this:
-
-```bash
-$ helm install --name my-release -f values.yaml wawastein-locust/locust
-```
 
 You can start the swarm from the command line using Port forwarding as follows:
 
