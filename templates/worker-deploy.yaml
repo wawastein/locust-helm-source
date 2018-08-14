@@ -1,0 +1,44 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "locust.worker" . }}
+  labels:
+    heritage: {{ .Release.Service | quote }}
+    release: {{ .Release.Name | quote }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    app: {{ template "locust.fullname" . }}
+    component: worker
+spec:
+  replicas: {{ default 2 .Values.worker.replicaCount }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: {{ default 1 .Values.worker.maxSurge }}
+      maxUnavailable: {{ default 1 .Values.worker.maxUnavailable }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/worker-cm.yaml") . | sha256sum }}
+      labels:
+        app: {{ template "locust.fullname" . }}
+        component: worker
+    spec:
+    {{- if .Values.image.pullSecrets }}
+      imagePullSecrets:
+{{ toYaml .Values.image.pullSecrets | indent 8 }}
+    {{- end }}
+      containers:
+      - name: locust
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        args: ['--master-host', '{{ template "locust.master-svc" . }}.{{ .Release.Namespace }}', '-f', '/tasks/{{ .Values.locustFile.filename }}', '--host', '{{ .Values.targetHost }}', '--slave']
+        volumeMounts:
+          - name: locustfile
+            mountPath: /tasks/
+        resources:
+{{ toYaml .Values.worker.resources | indent 10 }}
+      restartPolicy: Always
+      volumes:
+        - name: locustfile
+          configMap:
+            name: {{ template "locust.worker-configmap" . }}

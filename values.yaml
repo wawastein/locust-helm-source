@@ -1,0 +1,37 @@
+Name: locust
+
+image:
+  repository: wawastein/locust
+  tag: 0.8.1
+  pullPolicy: IfNotPresent
+  pullSecrets: []
+
+service:
+  name: master-web
+  type: LoadBalancer
+  externalPort: 8089
+  internalPort: 8089
+  nodePort: 0
+  annotations: {}
+  extraLabels: {}
+targetHost: https://example.com
+locustFile: 
+  dir: "tasks"
+  filename: "locustfile.py"
+master:
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+worker:
+  replicaCount: 2
+  resources:
+    limits:
+      cpu: 100m
+      memory: 256Mi
+    requests:
+      cpu: 10m
+      memory: 20Mi
