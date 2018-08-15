@@ -32,7 +32,7 @@ This is also the biggest caveat of stable/locust chart as well as all values bei
 | Parameter                    | Description                             | Default                                               |
 | ---------------------------- | ----------------------------------      | ----------------------------------------------------- |
 | `Name`                       | Locust master name                      | `locust`                                              |
-| `image.repository`           | Locust container image name             | `wawastein/locust`                                    |
+| `image.repository`           | Locust container image name             | `wawastein/locust-dockerfile`                                    |
 | `image.tag`                  | Locust Container image tag              | `0.8.1`                                               |
 | `image.pullSecrets`          | Locust Container image registry secret  | `None`                                                |
 | `service.type`               | k8s service type exposing master        | `LoadBalancer`                                        |
